@@ -1,0 +1,407 @@
+@import "tailwindcss";
+@import "tw-animate-css";
+@import "shadcn/tailwind.css";
+
+@custom-variant dark (&:is(.dark *));
+
+@theme inline {
+  --color-background: var(--background);
+  --color-foreground: var(--foreground);
+  --font-sans: var(--font-app);
+  --font-mono: var(--font-geist-mono);
+  --font-heading: var(--font-app);
+  --color-sidebar-ring: var(--sidebar-ring);
+  --color-sidebar-border: var(--sidebar-border);
+  --color-sidebar-accent-foreground: var(--sidebar-accent-foreground);
+  --color-sidebar-accent: var(--sidebar-accent);
+  --color-sidebar-primary-foreground: var(--sidebar-primary-foreground);
+  --color-sidebar-primary: var(--sidebar-primary);
+  --color-sidebar-foreground: var(--sidebar-foreground);
+  --color-sidebar: var(--sidebar);
+  --color-chart-5: var(--chart-5);
+  --color-chart-4: var(--chart-4);
+  --color-chart-3: var(--chart-3);
+  --color-chart-2: var(--chart-2);
+  --color-chart-1: var(--chart-1);
+  --color-ring: var(--ring);
+  --color-input: var(--input);
+  --color-border: var(--border);
+  --color-destructive: var(--destructive);
+  --color-accent-foreground: var(--accent-foreground-shadcn);
+  --color-accent: var(--accent-tint);
+  --color-muted-foreground: var(--muted-foreground);
+  --color-muted: var(--muted);
+  --color-secondary-foreground: var(--secondary-foreground);
+  --color-secondary: var(--secondary);
+  --color-primary-foreground: var(--accent-foreground);
+  --color-primary: var(--accent);
+  --color-popover-foreground: var(--popover-foreground);
+  --color-popover: var(--popover);
+  --color-card-foreground: var(--card-foreground);
+  --color-card: var(--card);
+  --radius-sm: 8px;
+  --radius-md: 12px;
+  --radius-lg: 16px;
+  --radius-xl: 20px;
+  --radius-2xl: 24px;
+  --radius-3xl: 28px;
+  --radius-4xl: 32px;
+}
+
+:root {
+  color-scheme: light;
+
+  /* ---- TripUp neutral baseline design tokens (BUILD-SPEC §5) ---- */
+  --font-app: -apple-system, BlinkMacSystemFont, "SF Pro Text", "Segoe UI", Roboto, sans-serif;
+
+  --background: #FFFFFF;
+  --surface: #FAFAFA;
+  --surface-raised: #FFFFFF;
+  --border: #E4E4E7;
+  --border-strong: #D4D4D8;
+  --foreground: #18181B;
+  --muted-foreground: #71717A;
+  --subtle-foreground: #A1A1AA;
+  --positive: #15803D;
+  --negative: #B91C1C;
+  /* Success/settled surfaces. The green sibling of --accent-tint, so success
+     states stop improvising raw rgba() and can carry the same 1px --border
+     every other card carries. */
+  --positive-tint: #F1FAF3;
+  --overlay: rgba(9, 9, 11, 0.40);
+
+  --accent: #2563EB;
+  --accent-pressed: #1D4ED8;
+  --accent-tint: #EFF6FF;
+  --accent-foreground: #FFFFFF;
+  /* Neutral pressed-state wash for rows and ghost controls — touch feedback
+     that never borrows the accent. */
+  --pressed-surface: rgba(9, 9, 11, 0.05);
+  /* separate token so shadcn's internal "accent" (hover-tint) role doesn't collide with our brand accent above */
+  --accent-foreground-shadcn: #18181B;
+
+  --radius: 12px;
+  --radius-bubble: 18px;
+
+  /* Elevation ladder. §5.7 defines the two ends (card, sheet); the two middle
+     tiers are the floating layer (FAB, popover) and the centred modal, which
+     the app genuinely uses and had no token for. Four steps, nothing else. */
+  --shadow-card: 0 1px 2px rgba(9, 9, 11, 0.05);
+  --shadow-float: 0 6px 16px rgba(9, 9, 11, 0.10), 0 1px 3px rgba(9, 9, 11, 0.06);
+  --shadow-dialog: 0 16px 48px rgba(9, 9, 11, 0.18);
+  --shadow-sheet: 0 -8px 32px rgba(9, 9, 11, 0.12);
+
+  /* One horizontal gutter for every screen (§5.2). */
+  --gutter: 16px;
+
+  /* avatar tint ramp (§5.6) */
+  --tint-0: #E4E4E7;
+  --tint-1: #DDE3EA;
+  --tint-2: #E7E2DC;
+  --tint-3: #E0E4DE;
+  --tint-4: #E6DEE4;
+  --tint-5: #DEE4E6;
+
+  /* shadcn structural tokens, mapped onto the neutral system above */
+  --card: var(--surface-raised);
+  --card-foreground: var(--foreground);
+  --popover: var(--surface-raised);
+  --popover-foreground: var(--foreground);
+  --secondary: var(--surface);
+  --secondary-foreground: var(--foreground);
+  --muted: var(--surface);
+  --destructive: var(--negative);
+  --input: var(--border-strong);
+  --ring: var(--accent);
+  --chart-1: oklch(0.87 0 0);
+  --chart-2: oklch(0.556 0 0);
+  --chart-3: oklch(0.439 0 0);
+  --chart-4: oklch(0.371 0 0);
+  --chart-5: oklch(0.269 0 0);
+  --sidebar: oklch(0.985 0 0);
+  --sidebar-foreground: oklch(0.145 0 0);
+  --sidebar-primary: oklch(0.205 0 0);
+  --sidebar-primary-foreground: oklch(0.985 0 0);
+  --sidebar-accent: oklch(0.97 0 0);
+  --sidebar-accent-foreground: oklch(0.205 0 0);
+  --sidebar-border: oklch(0.922 0 0);
+  --sidebar-ring: oklch(0.708 0 0);
+}
+
+@layer base {
+  * {
+    @apply border-border outline-ring/50;
+  }
+  html, body {
+    height: 100%;
+  }
+  body {
+    @apply bg-background text-foreground;
+    font-family: var(--font-app);
+  }
+  html {
+    @apply font-sans;
+  }
+  :focus-visible {
+    outline: 2px solid var(--accent);
+    outline-offset: 2px;
+    border-radius: inherit;
+  }
+}
+
+@layer utilities {
+  .text-display   { font-size: 32px; line-height: 38px; font-weight: 700; letter-spacing: -0.02em; }
+  .text-title     { font-size: 22px; line-height: 28px; font-weight: 700; letter-spacing: -0.01em; }
+  .text-headline  { font-size: 17px; line-height: 22px; font-weight: 600; }
+  .text-body      { font-size: 15px; line-height: 20px; font-weight: 400; }
+  .text-callout   { font-size: 15px; line-height: 20px; font-weight: 600; }
+  .text-subhead   { font-size: 13px; line-height: 18px; font-weight: 500; }
+  .text-caption   { font-size: 12px; line-height: 16px; font-weight: 400; }
+  .text-micro     { font-size: 11px; line-height: 14px; font-weight: 600; letter-spacing: 0.04em; text-transform: uppercase; }
+  .money-tabular  { font-variant-numeric: tabular-nums; }
+
+  /* --- Tap targets (§8.1 / NFR-04) ------------------------------------- */
+  /* Raises a control to the 44px minimum hit height. */
+  .hit-44 { min-height: 44px; }
+  /* Same, but for a control whose *visible* pill must stay ~32px: the extra
+     hit area is padding, and the negative margin keeps the surrounding
+     layout rhythm identical. Do not enlarge the glyph — grow the box. */
+  .hit-44-inset {
+    min-height: 44px;
+    padding-block: 6px;
+    margin-block: -6px;
+  }
+
+  /* For controls where the element itself IS the visible pill (chips, small
+     buttons): an invisible ::after grows the touch region to 44px without
+     touching the element's own size, background, or the layout around it.
+     Use this rather than min-height, which would inflate the pill. */
+  .hit-44-after { position: relative; }
+  .hit-44-after::after {
+    content: '';
+    position: absolute;
+    left: 0;
+    right: 0;
+    top: 50%;
+    transform: translateY(-50%);
+    height: 44px;
+    min-width: 44px;
+  }
+
+  /* --- Truncation ------------------------------------------------------ */
+  .truncate-2 {
+    display: -webkit-box;
+    -webkit-box-orient: vertical;
+    -webkit-line-clamp: 2;
+    overflow: hidden;
+  }
+}
+
+/* ---------------------------------------------------------------- */
+/* Device frame — fixed 390x844, centered on desktop, full-bleed on */
+/* real phones. See BUILD-SPEC §7.                                  */
+/* ---------------------------------------------------------------- */
+
+.device-page {
+  background: #F4F4F5;
+  min-height: 100dvh;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 24px;
+}
+
+.device-frame {
+  box-sizing: content-box;
+  width: 390px;
+  height: 844px;
+  border-radius: 44px;
+  overflow: hidden;
+  position: relative;
+  background: var(--background);
+  box-shadow: 0 24px 64px rgba(9, 9, 11, 0.18);
+  border: 10px solid #18181B;
+  /* Establishes a new containing block for `position: fixed` descendants
+     (Radix/Base UI overlays, sheets, dialogs) so portalled content — even
+     though rendered as a DOM child of this frame via the container prop —
+     is bounded by the 390x844 frame instead of the browser viewport. */
+  transform: translateZ(0);
+}
+
+.device-scroll {
+  height: 100%;
+  overflow-y: auto;
+  overscroll-behavior: contain;
+  position: relative;
+  display: flex;
+  flex-direction: column;
+}
+
+.landscape-block {
+  display: none;
+}
+
+@media (max-width: 429px), (max-height: 899px) and (pointer: coarse) {
+  .device-page {
+    padding: 0;
+    display: block;
+  }
+  .device-frame {
+    width: 100vw;
+    height: 100dvh;
+    border: 0;
+    border-radius: 0;
+    box-shadow: none;
+  }
+  .device-frame-statusbar,
+  .device-frame-homeindicator {
+    display: none;
+  }
+}
+
+@media (max-height: 700px) and (orientation: landscape) {
+  .landscape-block {
+    display: flex;
+  }
+  .device-page {
+    display: none;
+  }
+}
+
+/* ---------------------------------------------------------------- */
+/* Animation timing (§8.4)                                          */
+/* ---------------------------------------------------------------- */
+
+@keyframes feed-in {
+  from { opacity: 0; transform: translateY(8px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+.animate-feed-in { animation: feed-in 240ms ease-out; }
+
+@keyframes fold-in {
+  from { opacity: 0; max-height: 0; }
+  to { opacity: 1; max-height: 120px; }
+}
+.animate-fold-in { animation: fold-in 260ms ease-out; }
+
+@keyframes live-pulse {
+  0%, 100% { opacity: 1; }
+  50% { opacity: 0.35; }
+}
+.animate-live-pulse { animation: live-pulse 2000ms ease-in-out infinite; }
+
+@keyframes row-flash {
+  from { background-color: var(--accent-tint); }
+  to { background-color: transparent; }
+}
+.animate-row-flash { animation: row-flash 600ms ease-out; }
+
+/* Send button appearing once the composer has text (§6.2 — fade + scale, 120ms). */
+@keyframes send-in {
+  from { opacity: 0; transform: scale(0.7); }
+  to { opacity: 1; transform: scale(1); }
+}
+.animate-send-in { animation: send-in 120ms ease-out; }
+
+@keyframes chip-in {
+  from { opacity: 0; transform: scale(0.8); }
+  to { opacity: 1; transform: scale(1); }
+}
+.animate-chip-in { animation: chip-in 140ms ease-out; }
+
+@keyframes avatar-in {
+  from { opacity: 0; transform: scale(0.6); }
+  to { opacity: 1; transform: scale(1); }
+}
+.animate-avatar-in { animation: avatar-in 220ms cubic-bezier(0.34, 1.4, 0.64, 1); }
+
+@keyframes highlight-flash {
+  0% { background-color: var(--accent-tint); }
+  70% { background-color: var(--accent-tint); }
+  100% { background-color: transparent; }
+}
+.animate-highlight-flash { animation: highlight-flash 1200ms ease-out; }
+
+@keyframes checkmark-draw {
+  from { stroke-dashoffset: 48; }
+  to { stroke-dashoffset: 0; }
+}
+.animate-checkmark-draw { animation: checkmark-draw 420ms ease-out 120ms both; }
+
+@keyframes circle-scale-in {
+  from { transform: scale(0.7); opacity: 0; }
+  to { transform: scale(1); opacity: 1; }
+}
+.animate-circle-scale-in { animation: circle-scale-in 600ms ease-out; }
+
+.vote-bar-fill {
+  transition: width 420ms cubic-bezier(0.22, 1, 0.36, 1);
+}
+
+/* Tap feedback (§8.4): 90ms to scale(0.97)/opacity 0.85. For small, self-
+   contained controls — buttons, chips, cards. */
+.pressable {
+  transition: transform 90ms ease-out, opacity 90ms ease-out;
+  -webkit-tap-highlight-color: transparent;
+}
+.pressable:active {
+  transform: scale(0.97);
+  opacity: 0.85;
+}
+
+/* Tap feedback for full-bleed list rows and ghost text buttons, where scaling
+   the whole row reads as a glitch. A neutral wash instead — same 90ms. */
+.press-surface {
+  transition: background-color 90ms ease-out;
+  -webkit-tap-highlight-color: transparent;
+}
+.press-surface:active {
+  background-color: var(--pressed-surface);
+}
+
+/* Primary/accent buttons darken to --accent-pressed rather than dimming. */
+.press-accent {
+  transition: background-color 90ms ease-out, transform 90ms ease-out;
+  -webkit-tap-highlight-color: transparent;
+}
+.press-accent:active {
+  background-color: var(--accent-pressed) !important;
+  transform: scale(0.985);
+}
+
+/* A transfer collapsing into its settled state (§6.9 — the row stays put). */
+@keyframes settle-in {
+  from { opacity: 1; }
+  to   { opacity: 0.45; }
+}
+.animate-settle-in { animation: settle-in 240ms ease-out both; }
+
+/* Bottom sheets slide their full height rather than the primitive's default
+   2.5rem nudge — §8.4: 280ms in / 240ms out. */
+@keyframes sheet-up {
+  from { transform: translateY(100%); }
+  to   { transform: translateY(0); }
+}
+
+/* The Itinerary day strip scrolls horizontally; a visible bar under a 56px
+   row of pills is all noise and no signal. */
+.no-scrollbar { scrollbar-width: none; -ms-overflow-style: none; }
+.no-scrollbar::-webkit-scrollbar { display: none; }
+
+/* Slow breathing dot on the "day N of M" chip — the one signal on Home that
+   the trip is live right now. Reduced-motion callers get it held steady by
+   the block below. */
+@keyframes pulse-dot {
+  0%, 100% { opacity: 1; }
+  50%      { opacity: 0.35; }
+}
+.animate-pulse-dot { animation: pulse-dot 2.4s ease-in-out infinite; }
+
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+    scroll-behavior: auto !important;
+  }
+}
