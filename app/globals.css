@@ -102,6 +102,15 @@
   --tint-4: #E6DEE4;
   --tint-5: #DEE4E6;
 
+  /* second stop for each tint, so Avatar can render a two-stop gradient
+     instead of a flat wash — same six hues, a little depth. */
+  --tint-0-deep: #D4D4D8;
+  --tint-1-deep: #CBD5E1;
+  --tint-2-deep: #D9D0C4;
+  --tint-3-deep: #CBD6C7;
+  --tint-4-deep: #D8C9D6;
+  --tint-5-deep: #C7D3D6;
+
   /* shadcn structural tokens, mapped onto the neutral system above */
   --card: var(--surface-raised);
   --card-foreground: var(--foreground);
@@ -333,10 +342,6 @@
   to { transform: scale(1); opacity: 1; }
 }
 .animate-circle-scale-in { animation: circle-scale-in 600ms ease-out; }
-
-.vote-bar-fill {
-  transition: width 420ms cubic-bezier(0.22, 1, 0.36, 1);
-}
 
 /* Tap feedback (§8.4): 90ms to scale(0.97)/opacity 0.85. For small, self-
    contained controls — buttons, chips, cards. */

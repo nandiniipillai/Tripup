@@ -30,11 +30,12 @@ export function PollCard({ poll }: { poll: Poll }) {
   return (
     <div
       className="w-full animate-feed-in"
-      // Border INSTEAD of a shadow (§5.7) — this carried both, as did the Home
-      // trip rows and the itinerary preview card, while LineItemCard and the
-      // balance/expense groups correctly used border-only.
+      // Shadow INSTEAD of a border (§5.7) — the poll is the one card in the
+      // feed that's still changing, so it earns the app's --shadow-float
+      // tier (defined for FAB/popover, previously unused here) instead of
+      // sitting flush with the rest of the conversation on a flat border.
       style={{
-        borderRadius: 'var(--radius-lg)', border: '1px solid var(--border)', background: 'var(--surface-raised)',
+        borderRadius: 'var(--radius-lg)', boxShadow: 'var(--shadow-float)', background: 'var(--surface-raised)',
         padding: 12,
       }}
     >
@@ -65,7 +66,16 @@ export function PollCard({ poll }: { poll: Poll }) {
         {poll.options.map((opt) => {
           const voteCount = tally[opt.id] ?? 0;
           const pct = totalVotes > 0 ? Math.round((voteCount / totalVotes) * 100) : 0;
-          const voters = Object.entries(poll.votes).filter(([, optId]) => optId === opt.id).map(([mid]) => members[mid]).filter(Boolean);
+          // Current user sorted first: PollOptionRow only shows the first 3
+          // avatars, and "which one did I vote for" has no other visual
+          // signal now that the fill-bar (and its old isMine outline) is
+          // gone — losing your own avatar off the end of the slice would
+          // make your own vote literally unreadable.
+          const voters = Object.entries(poll.votes)
+            .filter(([, optId]) => optId === opt.id)
+            .map(([mid]) => members[mid])
+            .filter(Boolean)
+            .sort((a, b) => (a.id === CURRENT_USER_ID ? -1 : b.id === CURRENT_USER_ID ? 1 : 0));
           const isLeading = isOpen && !isTie && voteCount === maxCount && voteCount > 0;
           return (
             <PollOptionRow
@@ -79,6 +89,7 @@ export function PollCard({ poll }: { poll: Poll }) {
               isWinner={isClosed && poll.winningOptionId === opt.id}
               isClosed={!isOpen}
               deemphasized={isClosed && poll.winningOptionId !== opt.id}
+              addedByMember={opt.isSuggested ? members[opt.addedById] : undefined}
               onVote={isOpen ? () => castVote(poll.id, CURRENT_USER_ID, opt.id) : undefined}
             />
           );

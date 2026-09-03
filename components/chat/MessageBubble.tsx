@@ -15,8 +15,14 @@ export function MessageBubble({
 
   return (
     <div className={`flex flex-col animate-feed-in ${isOwn ? 'items-end' : 'items-start'}`}>
+      {/* Polarity flip per the hi-fi: incoming messages (other members) now
+          carry the --accent-tint wash and an accent-colored name label; the
+          current user's own sent messages are plain/neutral — you already
+          know it's you, so they get --surface-raised + a hairline border
+          instead of a name label. Straightforward swap of which side gets
+          which treatment, not a new visual language. */}
       {showAuthorLabel && !isOwn && (
-        <span className="text-subhead px-1 mb-0.5" style={{ color: 'var(--muted-foreground)' }}>{author?.name ?? 'Someone'}</span>
+        <span className="text-subhead px-1 mb-0.5" style={{ color: 'var(--accent)' }}>{author?.name ?? 'Someone'}</span>
       )}
       <div className="relative" style={{ maxWidth: '76%' }}>
         <button
@@ -25,9 +31,9 @@ export function MessageBubble({
           onClick={() => toggleReaction(item.id)}
           className="text-left px-3 py-2 pressable cursor-pointer"
           style={{
-            background: isOwn ? 'var(--accent-tint)' : 'var(--surface-raised)',
+            background: isOwn ? 'var(--surface-raised)' : 'var(--accent-tint)',
             color: 'var(--foreground)',
-            border: isOwn ? 'none' : '1px solid var(--border)',
+            border: isOwn ? '1px solid var(--border)' : 'none',
             borderRadius: 18,
             borderBottomRightRadius: isOwn ? 6 : 18,
             borderBottomLeftRadius: isOwn ? 18 : 6,

@@ -10,9 +10,9 @@ const TABS: { key: 'chat' | 'itinerary' | 'expenses'; label: string; icon: (acti
   {
     key: 'itinerary', label: 'Itinerary', icon: (active) => (
       <svg width="22" height="22" viewBox="0 0 22 22" fill="none">
-        <rect x="3.5" y="4" width="15" height="14" rx="2" stroke={active ? 'var(--foreground)' : 'var(--muted-foreground)'} strokeWidth="1.6" />
-        <path d="M3.5 8.5H18.5" stroke={active ? 'var(--foreground)' : 'var(--muted-foreground)'} strokeWidth="1.6" />
-        <path d="M7 2.5V5.5M15 2.5V5.5" stroke={active ? 'var(--foreground)' : 'var(--muted-foreground)'} strokeWidth="1.6" strokeLinecap="round" />
+        <rect x="3.5" y="4" width="15" height="14" rx="2" stroke={active ? 'var(--accent)' : 'var(--muted-foreground)'} strokeWidth="1.6" />
+        <path d="M3.5 8.5H18.5" stroke={active ? 'var(--accent)' : 'var(--muted-foreground)'} strokeWidth="1.6" />
+        <path d="M7 2.5V5.5M15 2.5V5.5" stroke={active ? 'var(--accent)' : 'var(--muted-foreground)'} strokeWidth="1.6" strokeLinecap="round" />
       </svg>
     ),
   },
@@ -20,16 +20,16 @@ const TABS: { key: 'chat' | 'itinerary' | 'expenses'; label: string; icon: (acti
     key: 'chat', label: 'Chat', icon: (active) => (
       <svg width="22" height="22" viewBox="0 0 22 22" fill="none">
         <path d="M3 4.5C3 3.67 3.67 3 4.5 3H17.5C18.33 3 19 3.67 19 4.5V13.5C19 14.33 18.33 15 17.5 15H8L4 18.5V15H4.5C3.67 15 3 14.33 3 13.5V4.5Z"
-          stroke={active ? 'var(--foreground)' : 'var(--muted-foreground)'} strokeWidth="1.6" strokeLinejoin="round" />
+          stroke={active ? 'var(--accent)' : 'var(--muted-foreground)'} strokeWidth="1.6" strokeLinejoin="round" />
       </svg>
     ),
   },
   {
     key: 'expenses', label: 'Expenses', icon: (active) => (
       <svg width="22" height="22" viewBox="0 0 22 22" fill="none">
-        <circle cx="11" cy="11" r="7.5" stroke={active ? 'var(--foreground)' : 'var(--muted-foreground)'} strokeWidth="1.6" />
+        <circle cx="11" cy="11" r="7.5" stroke={active ? 'var(--accent)' : 'var(--muted-foreground)'} strokeWidth="1.6" />
         <path d="M11 7V15M13.2 8.8C13.2 7.8 12.2 7 11 7C9.6 7 8.8 7.8 8.8 8.7C8.8 11 13.2 9.9 13.2 12.2C13.2 13.2 12.2 14 11 14C9.8 14 8.8 13.2 8.8 12.2"
-          stroke={active ? 'var(--foreground)' : 'var(--muted-foreground)'} strokeWidth="1.4" strokeLinecap="round" />
+          stroke={active ? 'var(--accent)' : 'var(--muted-foreground)'} strokeWidth="1.4" strokeLinecap="round" />
       </svg>
     ),
   },
@@ -58,7 +58,13 @@ export function TabBar() {
       // §7: 56px of content PLUS 34px of safe area. This was `height: 56` with
       // `paddingBottom: 20` under border-box sizing, which left a 35px content
       // box for ~40px of icon + label.
-      style={{ minHeight: 56, paddingBottom: 34, background: 'var(--surface-raised)', borderTop: '1px solid var(--border)' }}
+      // Shadow INSTEAD of a border, lifting the bar off the content above it —
+      // the app's own --shadow-float ladder, applied upward, replaces the flat
+      // hairline that made the dock read as just another content divider.
+      style={{
+        minHeight: 56, paddingBottom: 34, background: 'var(--surface-raised)',
+        borderRadius: '20px 20px 0 0', boxShadow: '0 -6px 20px rgba(9, 9, 11, 0.06)',
+      }}
     >
       {TABS.map((tab) => {
         const active = activeTab === tab.key;
@@ -84,7 +90,7 @@ export function TabBar() {
                 />
               )}
             </span>
-            <span className="text-caption" style={{ color: active ? 'var(--foreground)' : 'var(--muted-foreground)', fontWeight: active ? 600 : 400 }}>
+            <span className="text-caption" style={{ color: active ? 'var(--accent)' : 'var(--muted-foreground)', fontWeight: active ? 600 : 400 }}>
               {tab.label}
             </span>
           </button>

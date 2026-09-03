@@ -42,7 +42,13 @@ export function Composer() {
 
       {/* Ghost, per §6.2 — the poll icon and the send button were identical
           44px filled accent circles, so neither read as the primary act. The
-          solid accent circle is reserved for send. */}
+          solid accent circle is reserved for send.
+          Confirmed again against the hi-fi: the quick-status trigger
+          (QuickStatusPopover) is the one that gets the filled accent circle
+          now, not this button. Once a poll exists, its own card (accent
+          border, LIVE badge — see PollCard.tsx) already carries the visual
+          weight; this entry point doesn't need to out-shout it too. That's
+          the human designer's explicit call here, followed exactly. */}
       <button
         aria-label="Create a poll"
         onClick={() => openSheet('createPoll')}

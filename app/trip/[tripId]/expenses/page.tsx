@@ -3,9 +3,8 @@
 import { useEffect } from 'react';
 import { useRouter, useParams } from 'next/navigation';
 import { useTripStore } from '@/lib/store';
-import { useBalances, useTransfers, useNaivePaymentCount } from '@/lib/selectors';
+import { useBalances, useTransfers } from '@/lib/selectors';
 import { CURRENT_USER_ID } from '@/lib/seed';
-import { ConsolidationBanner } from '@/components/expenses/ConsolidationBanner';
 import { BalanceRow } from '@/components/expenses/BalanceRow';
 import { ExpenseListRow } from '@/components/expenses/ExpenseListRow';
 import { PrimaryButton, QuietButton } from '@/components/common/Action';
@@ -21,7 +20,6 @@ export default function ExpensesPage() {
   const expenses = useTripStore((s) => s.expenses);
   const balances = useBalances();
   const transfers = useTransfers();
-  const naiveCount = useNaivePaymentCount();
 
   useEffect(() => {
     setActiveTab('expenses');
@@ -51,9 +49,10 @@ export default function ExpensesPage() {
           Log expense
         </QuietButton>
       </div>
+      {/* The "N payments instead of M" line now lives on Settle Up only
+          (matches the hi-fi) — showing it here too repeated the app's best
+          line one tap before the screen that actually delivers on it. */}
       <div className="flex-1 overflow-y-auto px-4 pb-6 flex flex-col gap-4">
-        <ConsolidationBanner transferCount={outstandingCount} naiveCount={naiveCount} />
-
         <div>
           <div className="text-micro mb-2" style={{ color: 'var(--muted-foreground)' }}>BALANCES</div>
           {/* overflow:hidden so the current-user row's tinted ground clips to
