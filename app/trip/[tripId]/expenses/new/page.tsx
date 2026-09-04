@@ -52,14 +52,14 @@ function LogExpenseForm() {
       };
     }
 
-    // The poll-created dinner item has no estimatedCostPerPerson (nobody
-    // typed one), but it's the scenario's actual expense — pre-fill it with
-    // the exact Food/Wine split the scenario describes (excluding Nic and
-    // Ren from the wine) instead of leaving arbitrary blanks nobody can
+    // Any poll-created dining item (not just the scripted A Cevicheria win —
+    // a tie-break can send Ari to Ramiro or Time Out instead) gets the
+    // scenario's actual Food/Wine split pre-filled, excluding Nic and Ren
+    // from the wine, instead of leaving arbitrary blanks nobody can
     // reproduce the hi-fi numbers from. See scripts/verify-settle-flow.ts for
     // the locked ledger these numbers reproduce.
-    if (fromItem?.id === 'itin_dinner') {
-      const foodIds = ['m_ari', 'm_nic', 'm_sam', 'm_mia', 'm_ren'].filter((id) => tripMemberIds.has(id));
+    if (fromItem?.source === 'poll') {
+      const foodIds = ['m_jules', 'm_ari', 'm_nic', 'm_sam', 'm_mia', 'm_ren'].filter((id) => tripMemberIds.has(id));
       const wineIds = ['m_ari', 'm_sam', 'm_mia'].filter((id) => tripMemberIds.has(id));
       return {
         description: fromItem.title,

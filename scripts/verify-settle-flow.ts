@@ -28,7 +28,7 @@ state.addExpense({
   description: 'Dinner at A Cevicheria',
   payerId: 'm_ari',
   lineItems: [
-    { id: 'li_food', label: 'Food', amount: 14000, includedMemberIds: ['m_ari', 'm_nic', 'm_sam', 'm_mia', 'm_ren'] },
+    { id: 'li_food', label: 'Food', amount: 14000, includedMemberIds: ['m_jules', 'm_ari', 'm_nic', 'm_sam', 'm_mia', 'm_ren'] },
     { id: 'li_wine', label: 'Wine', amount: 4500, includedMemberIds: ['m_ari', 'm_sam', 'm_mia'] },
   ],
 });
@@ -38,7 +38,7 @@ const balances = computeBalances(after.expenses, after.trip.memberIds);
 const transfers = computeTransfers(balances, after.trip.memberIds);
 
 const expectedNet: Record<string, number> = {
-  m_jules: -7000, m_ari: 7200, m_nic: -9800, m_sam: -6300, m_mia: 18700, m_ren: -2800,
+  m_jules: -9334, m_ari: 7666, m_nic: -9333, m_sam: -5833, m_mia: 19167, m_ren: -2333,
 };
 let netsOk = true;
 for (const [id, expected] of Object.entries(expectedNet)) {
@@ -47,8 +47,8 @@ for (const [id, expected] of Object.entries(expectedNet)) {
 log('Post-dinner net balances match the locked ledger exactly', netsOk);
 
 const expectedTransfers = [
-  ['m_nic', 'm_mia', 9800], ['m_jules', 'm_mia', 7000], ['m_sam', 'm_mia', 1900],
-  ['m_sam', 'm_ari', 4400], ['m_ren', 'm_ari', 2800],
+  ['m_jules', 'm_mia', 9334], ['m_nic', 'm_mia', 9333], ['m_sam', 'm_mia', 500],
+  ['m_sam', 'm_ari', 5333], ['m_ren', 'm_ari', 2333],
 ];
 const gotTransfers = transfers.map((t) => [t.fromId, t.toId, t.amount]);
 log(

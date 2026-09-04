@@ -352,7 +352,7 @@ export const useTripStore = create<TripUpState>((set, get) => {
       // representation anywhere — not the wireflow, not the build. A system
       // line right after the poll card is the cheapest honest way to show
       // the group was actually reached, not just that Ari sent something.
-      const sentCount = poll.eligibleVoterIds.length;
+      const sentCount = poll.eligibleVoterIds.filter((id) => id !== CURRENT_USER_ID).length;
       const sentItem: SystemEventItem = {
         id: genId('f_sys'), kind: 'system', createdAt,
         event: { type: 'poll_sent', pollId, count: sentCount },

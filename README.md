@@ -21,7 +21,7 @@ You're **Ari**, on the last evening of a week in Lisbon with four friends. The p
 2. **Itinerary** — the trip day by day. Tap through the day strip; Saturday is deliberately missing a dinner.
 3. **Chat** — add **Ren**, who's joining for the final dinner, then start a poll with three restaurants. Votes come in live; anyone can add an option mid-poll. When the poll closes, the winner is written straight into Saturday's itinerary.
 4. **Expenses** — log the dinner as two line items, and exclude Nic and Ren from the wine. Balances update immediately.
-5. **Settle up** — TripUp consolidates everyone's debts into the fewest possible transfers (5 instead of 12), and settling clears them on the spot.
+5. **Settle up** — TripUp consolidates everyone's debts into the fewest possible transfers (5 instead of 13), and settling clears them on the spot.
 
 ## Notes
 
