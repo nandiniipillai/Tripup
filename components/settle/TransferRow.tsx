@@ -76,7 +76,7 @@ export function TransferRow(props: HeroProps | QuietProps) {
               <SecondaryButton onClick={onRemind}>Remind</SecondaryButton>
             )
           ) : (
-            <SecondaryButton tone="filled" onClick={onOpen}>Pay</SecondaryButton>
+            <SecondaryButton tone="negative" onClick={onOpen}>Pay</SecondaryButton>
           )}
         </div>
       </div>

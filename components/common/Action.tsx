@@ -46,13 +46,17 @@ export function PrimaryButton({ children, className = '', ...rest }: ButtonBase)
  * The single secondary-action treatment. A 32px pill with a 44px hit box
  * (padding, not a bigger pill — §8.1).
  *
- *   tone="outline"  accent label on a hairline pill  — the default
- *   tone="filled"   accent fill                      — when it is the row's primary act
+ *   tone="outline"   accent label on a hairline pill  — the default
+ *   tone="filled"    accent fill                      — when it is the row's primary act
+ *   tone="negative"  negative fill                     — the row's primary act IS paying
+ *                     money out (§6.9 Zone 1 "you owe"), matching the hi-fi's
+ *                     red Pay button — not the neutral accent used everywhere else
  */
 export function SecondaryButton({
   children, tone = 'outline', className = '', ...rest
-}: ButtonBase & { tone?: 'outline' | 'filled' }) {
-  const filled = tone === 'filled';
+}: ButtonBase & { tone?: 'outline' | 'filled' | 'negative' }) {
+  const filled = tone === 'filled' || tone === 'negative';
+  const fillColor = tone === 'negative' ? 'var(--negative)' : 'var(--accent)';
   return (
     // hit-44-after, not min-height: this element IS the visible pill, so a
     // 44px minimum would inflate it into a blob. The invisible ::after does
@@ -66,9 +70,9 @@ export function SecondaryButton({
         fontSize: 13,
         lineHeight: '18px',
         fontWeight: 600,
-        background: filled ? 'var(--accent)' : 'transparent',
+        background: filled ? fillColor : 'transparent',
         border: filled ? '1px solid transparent' : '1px solid var(--border-strong)',
-        color: filled ? 'var(--accent-foreground)' : 'var(--accent)',
+        color: filled ? '#FFFFFF' : 'var(--accent)',
         whiteSpace: 'nowrap',
       }}
     >

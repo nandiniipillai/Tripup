@@ -21,12 +21,12 @@ export function PollCard({ poll }: { poll: Poll }) {
   const counts = Object.values(tally);
   const maxCount = counts.length ? Math.max(...counts) : 0;
   const leaders = poll.options.filter((o) => tally[o.id] === maxCount);
-  // A tie only means anything once everyone's had their say — flagging it
-  // the moment the 2nd of 6 votes lands (a near-certain early state) reads
-  // as a false alarm on the card's centerpiece screen. The close-time tie
-  // handling (closePoll -> TieBreakDialog) is unaffected; this only gates
-  // the live in-card variant.
-  const isTie = leaders.length > 1 && maxCount > 0 && totalVotes >= poll.eligibleVoterIds.length;
+  // Live, not gated to full participation — the hi-fi's own "3-way tie"
+  // mock is exactly this mid-poll state (Phase A alone reaches Ramiro 1 /
+  // Cevicheria 1 / Time Out 1 at 3 of 6 voted, before Ari has even cast his
+  // vote). A tie is a tie the moment it happens; "Break tie" being available
+  // early is the point, not a bug.
+  const isTie = leaders.length > 1 && maxCount > 0;
 
   const isOpen = poll.status === 'open';
   const isTieBreak = poll.status === 'tie_break';
