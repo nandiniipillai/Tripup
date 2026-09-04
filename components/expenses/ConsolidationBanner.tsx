@@ -1,5 +1,6 @@
-export function ConsolidationBanner({ transferCount, naiveCount }: { transferCount: number; naiveCount: number }) {
-  const allSquare = transferCount === 0;
+export function ConsolidationBanner({
+  transferCount, naiveCount, allSquare = transferCount === 0,
+}: { transferCount: number; naiveCount: number; allSquare?: boolean }) {
   return (
     <div
       className="flex items-start gap-3 px-3 py-3"

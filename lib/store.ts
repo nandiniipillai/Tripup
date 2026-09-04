@@ -348,9 +348,21 @@ export const useTripStore = create<TripUpState>((set, get) => {
         itinerarySlot: deriveSlot(draft.question),
       };
       const feedItem: PollItem = { id: genId('f_poll'), kind: 'poll', pollId, authorId: CURRENT_USER_ID, createdAt };
+      // Per the hi-fi: the scenario's "everyone is notified" beat had no
+      // representation anywhere — not the wireflow, not the build. A system
+      // line right after the poll card is the cheapest honest way to show
+      // the group was actually reached, not just that Ari sent something.
+      const sentCount = poll.eligibleVoterIds.length;
+      const sentItem: SystemEventItem = {
+        id: genId('f_sys'), kind: 'system', createdAt,
+        event: { type: 'poll_sent', pollId, count: sentCount },
+        text: `Sent to ${sentCount} people`,
+      };
       set((s) => ({
         polls: { ...s.polls, [pollId]: poll },
-        feed: [...s.feed, feedItem],
+        // Confirmation sits above the card, per the hi-fi — "you're about to
+        // see this land" before the card that's about to fill with votes.
+        feed: [...s.feed, sentItem, feedItem],
         ui: { ...s.ui, clockOffsetMinutes: offset, openSheet: null },
       }));
       startPhaseA(pollId);

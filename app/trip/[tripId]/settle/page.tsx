@@ -2,7 +2,7 @@
 
 import { useRouter, useParams } from 'next/navigation';
 import { useTripStore } from '@/lib/store';
-import { useBalances, useMyTransfers, useOtherTransfers, useTransfers, useNaivePaymentCount } from '@/lib/selectors';
+import { useDisplayBalances, useMyTransfers, useOtherTransfers, useTransfers, useNaivePaymentCount } from '@/lib/selectors';
 import { CURRENT_USER_ID } from '@/lib/seed';
 import { ScreenHeader } from '@/components/nav/ScreenHeader';
 import { BalanceHero } from '@/components/settle/BalanceHero';
@@ -20,7 +20,7 @@ export default function SettlePage() {
   const markReminded = useTripStore((s) => s.markReminded);
   const setOpenDialog = useTripStore((s) => s.setOpenDialog);
 
-  const balances = useBalances();
+  const balances = useDisplayBalances();
   const myTransfers = useMyTransfers();
   const otherTransfers = useOtherTransfers();
   const allTransfers = useTransfers();
@@ -46,7 +46,14 @@ export default function SettlePage() {
             was the one place that never said the debts had been netted down. */}
         <div className="mx-4 mt-4 px-4 pt-5 pb-5 flex flex-col gap-4" style={{ background: 'var(--surface-raised)', borderRadius: 'var(--radius-lg)', boxShadow: 'var(--shadow-float)' }}>
           <BalanceHero net={myNet} />
-          <ConsolidationBanner transferCount={outstandingCount} naiveCount={naiveCount} />
+          {/* transferCount is the TOTAL consolidated set (fixed for the whole
+              settle flow), not outstandingCount — otherwise "Simplified to 5
+              payments instead of 13" would count down to "4", "3"... as the
+              user settles, which makes the app's core claim false mid-demo.
+              allSquare (the positive-tint "squared up" variant) is driven by
+              outstandingCount separately, so it still flips once everything
+              is settled. */}
+          <ConsolidationBanner transferCount={allTransfers.length} naiveCount={naiveCount} allSquare={outstandingCount === 0} />
           {myTransfers.length > 0 && (
             <div className="flex flex-col gap-2">
               {myTransfers.map((t) => {

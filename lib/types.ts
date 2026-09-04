@@ -66,6 +66,7 @@ export interface PollItem extends FeedItemBase {
 export type SystemEvent =
   | { type: 'trip_created'; actorId: MemberId }
   | { type: 'member_added'; actorId: MemberId; subjectId: MemberId }
+  | { type: 'poll_sent'; pollId: string; count: number }
   | { type: 'poll_closed'; pollId: string; winningOptionId: string; votes: number; total: number }
   | { type: 'poll_closed_early'; pollId: string; winningOptionId: string; votes: number; total: number }
   | { type: 'poll_tie_broken'; pollId: string; winningOptionId: string; actorId: MemberId }
@@ -92,7 +93,7 @@ export type FeedItem =
 
 export const PING_LABELS: Record<PingKind, { glyph: string; label: string }> = {
   omw: { glyph: '🚶', label: 'On my way' },
-  late10: { glyph: '⏱️', label: 'Running late 10' },
+  late10: { glyph: '⏱️', label: 'Running late ~10 min' },
   here: { glyph: '📍', label: 'Here!' },
 };
 

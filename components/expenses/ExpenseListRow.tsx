@@ -16,10 +16,14 @@ function glyphFor(description: string): string {
   return '🧾';
 }
 
-export function ExpenseListRow({ expense, payer }: { expense: Expense; payer?: Member }) {
+// Tappable — was a plain, non-interactive <div> styled identically to every
+// other (genuinely tappable) row in the app, a false affordance made worse by
+// there being nothing to tap through to: no way to check which line items
+// included/excluded whom one screen after logging them.
+export function ExpenseListRow({ expense, payer, onClick }: { expense: Expense; payer?: Member; onClick?: () => void }) {
   const total = expenseTotal(expense);
   return (
-    <div className="flex items-center gap-3 px-3" style={{ height: 64 }}>
+    <button onClick={onClick} className="w-full flex items-center gap-3 px-3 text-left press-surface" style={{ height: 64 }}>
       <div className="flex items-center justify-center shrink-0" style={{ width: 40, height: 40, borderRadius: 'var(--radius-md)', background: 'var(--surface)', fontSize: 18 }}>
         {glyphFor(expense.description)}
       </div>
@@ -30,6 +34,6 @@ export function ExpenseListRow({ expense, payer }: { expense: Expense; payer?: M
         </div>
       </div>
       <Money value={total} size="body" stack align="right" />
-    </div>
+    </button>
   );
 }

@@ -42,6 +42,8 @@ function LogExpenseForm() {
   const fromItem = fromItemId ? itinerary.find((i) => i.id === fromItemId) : undefined;
 
   const initial = useMemo(() => {
+    const tripMemberIds = new Set(tripMembers.map((m) => m.id));
+
     if (fromItem?.estimatedCostPerPerson) {
       const total = fromItem.estimatedCostPerPerson * tripMembers.length;
       return {
@@ -49,6 +51,35 @@ function LogExpenseForm() {
         lineItems: [{ id: newLineItemId(), label: fromItem.title, amountInput: (total / 100).toFixed(2), includedMemberIds: tripMembers.map((m) => m.id) }],
       };
     }
+
+    // The poll-created dinner item has no estimatedCostPerPerson (nobody
+    // typed one), but it's the scenario's actual expense — pre-fill it with
+    // the exact Food/Wine split the scenario describes (excluding Nic and
+    // Ren from the wine) instead of leaving arbitrary blanks nobody can
+    // reproduce the hi-fi numbers from. See scripts/verify-settle-flow.ts for
+    // the locked ledger these numbers reproduce.
+    if (fromItem?.id === 'itin_dinner') {
+      const foodIds = ['m_ari', 'm_nic', 'm_sam', 'm_mia', 'm_ren'].filter((id) => tripMemberIds.has(id));
+      const wineIds = ['m_ari', 'm_sam', 'm_mia'].filter((id) => tripMemberIds.has(id));
+      return {
+        description: fromItem.title,
+        lineItems: [
+          { id: newLineItemId(), label: 'Food', amountInput: '140.00', includedMemberIds: foodIds },
+          { id: newLineItemId(), label: 'Wine', amountInput: '45.00', includedMemberIds: wineIds },
+        ],
+      };
+    }
+
+    // No cost estimate to prefill amounts from, but the description should
+    // still carry over — "Log as expense" from an itinerary item shouldn't
+    // discard the one thing it already knows.
+    if (fromItem) {
+      return {
+        description: fromItem.title,
+        lineItems: [{ id: newLineItemId(), label: '', amountInput: '', includedMemberIds: tripMembers.map((m) => m.id) }],
+      };
+    }
+
     return {
       description: '',
       lineItems: [{ id: newLineItemId(), label: '', amountInput: '', includedMemberIds: tripMembers.map((m) => m.id) }],
@@ -64,7 +95,20 @@ function LogExpenseForm() {
   const cardRefs = useRef<Record<string, HTMLDivElement | null>>({});
 
   const today = todayDateStr();
-  const suggestionChips = itinerary.filter((i) => i.date === today).map((i) => i.title).slice(0, 3);
+  // Plain slice(0,3) in itinerary order used to offer "Belém & pastéis de
+  // nata", "Jerónimos Monastery" and "Ren lands at LIS" (an arrival — never a
+  // plausible expense) while cutting off "Dinner @ ..." — the poll-created
+  // item appended last, and the one expense the scenario is actually about.
+  // Poll-created items sort first; obvious arrival/transit-only titles sort
+  // last instead of being hard-excluded, so nothing silently vanishes if a
+  // day is short on other options.
+  const ARRIVAL_OR_TRANSIT_RE = /\blands?\b|\bflight(s)?\b|check[- ]?(in|out)/i;
+  const todaysItems = itinerary.filter((i) => i.date === today);
+  const rankedToday = [...todaysItems].sort((a, b) => {
+    const score = (item: typeof a) => (item.source === 'poll' ? 0 : ARRIVAL_OR_TRANSIT_RE.test(item.title) ? 2 : 1);
+    return score(a) - score(b);
+  });
+  const suggestionChips = rankedToday.map((i) => i.title).slice(0, 4);
 
   const totalCents = lineItems.reduce((sum, li) => sum + parseAmountToCents(li.amountInput), 0);
   const converted = formatConverted(totalCents, trip.currency, 'USD');

@@ -22,7 +22,11 @@ export function ItineraryItemCard({ item, pastDay }: { item: ItineraryItem; past
   const highlightId = useTripStore((s) => s.ui.highlightItineraryItemId);
   const isHighlighted = highlightId === item.id;
 
-  const showLogAsExpense = item.estimatedCostPerPerson != null && !item.convertedToExpenseId;
+  // Poll-created items never carry an estimatedCostPerPerson (nobody typed
+  // one in), but they're exactly the item the scenario expects you to log an
+  // expense from next — gating on the estimate alone hid the shortcut on the
+  // one item that needed it most.
+  const showLogAsExpense = !item.convertedToExpenseId && (item.estimatedCostPerPerson != null || item.source === 'poll');
 
   return (
     <div

@@ -63,7 +63,7 @@ export default function ItineraryPage() {
       {groups.length === 0 ? (
         <EmptyState glyph="🗺️" title="Nothing planned yet" body="Add your first stop or wait for a poll to decide one." actionLabel="Add to itinerary" onAction={() => openSheet('addItinerary')} />
       ) : selected === 'all' ? (
-        <div className="flex-1 overflow-y-auto">
+        <div className="flex-1 overflow-y-auto no-scrollbar">
           <SectionHeader
             left={`ALL ${days.length} DAYS`}
             actionLabel="Today"
@@ -75,7 +75,7 @@ export default function ItineraryPage() {
           <div style={{ height: 24 }} />
         </div>
       ) : (
-        <div className="flex-1 overflow-y-auto">
+        <div className="flex-1 overflow-y-auto no-scrollbar">
           <SectionHeader
             left={`${selected === today ? 'TODAY' : formatDayHeaderTitleCase(selected).toUpperCase()} · DAY ${tripDayNumber(selected, trip.startDate, trip.endDate)} OF ${days.length}`}
             actionLabel={`All ${days.length} days`}

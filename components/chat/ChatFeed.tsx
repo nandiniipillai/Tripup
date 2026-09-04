@@ -84,7 +84,7 @@ export function ChatFeed() {
   const today = todayDateStr();
 
   return (
-    <div ref={scrollRef} className="flex-1 overflow-y-auto px-4 pt-3 pb-3 flex flex-col" style={{ background: 'var(--surface)' }}>
+    <div ref={scrollRef} className="flex-1 overflow-y-auto no-scrollbar px-4 pt-3 pb-3 flex flex-col" style={{ background: 'var(--surface)' }}>
       {feed.map((item, i) => {
         const itemDate = item.createdAt.slice(0, 10);
         const prev = feed[i - 1];
@@ -128,7 +128,12 @@ function renderItem(
     case 'ping':
       return <PingPill item={item} author={ctx.members[item.authorId]} />;
     case 'system':
-      return <SystemLine text={item.text} />;
+      // poll_sent is a confirmation, not ambient history — it gets the same
+      // positive-pill language as a settled state, not the muted dash-line
+      // every other system event uses.
+      return item.event.type === 'poll_sent'
+        ? <SystemLine text={item.text} variant="positive" glyph="✓" />
+        : <SystemLine text={item.text} />;
     case 'poll': {
       const poll = ctx.polls[item.pollId];
       return poll ? <PollCard poll={poll} /> : null;

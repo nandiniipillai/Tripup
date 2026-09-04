@@ -6,6 +6,7 @@ import { RadioGroup, RadioGroupItem } from '@/components/ui/radio-group';
 import { Label } from '@/components/ui/label';
 import { useTripStore } from '@/lib/store';
 import type { Poll } from '@/lib/types';
+import { joinNames, bothAllEach } from '@/lib/utils';
 
 export function TieBreakDialog() {
   const openDialog = useTripStore((s) => s.ui.openDialog);
@@ -36,13 +37,13 @@ function TieBreakForm({ poll, onCancel, onResolve }: { poll: Poll; onCancel: () 
   const tally: Record<string, number> = {};
   for (const optId of Object.values(poll.votes)) tally[optId] = (tally[optId] ?? 0) + 1;
   const count = tally[tied[0]?.id] ?? 0;
-  const names = tied.map((t) => t.name).join(' and ');
+  const names = joinNames(tied.map((t) => t.name));
 
   return (
     <>
       <DialogHeader>
         <DialogTitle>It&apos;s a tie</DialogTitle>
-        <DialogDescription>{`${names} both have ${count} ${count === 1 ? 'vote' : 'votes'}. Pick one to lock in — anyone can decide.`}</DialogDescription>
+        <DialogDescription>{`${names} ${bothAllEach(tied.length)} have ${count} ${count === 1 ? 'vote' : 'votes'}. Pick one to lock in — anyone can decide.`}</DialogDescription>
       </DialogHeader>
       <RadioGroup value={selected} onValueChange={setSelected} className="gap-2">
         {tied.map((opt) => (

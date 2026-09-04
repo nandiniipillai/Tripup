@@ -116,7 +116,13 @@ function CreatePollForm({
                 value={opt.descriptor}
                 onChange={(e) => updateOption(i, { descriptor: e.target.value })}
                 aria-label={`Description for option ${i + 1}`}
-                className="text-[13px] leading-[18px] font-normal text-[var(--muted-foreground)]"
+                // Smaller/lighter-weight than the option name it supports —
+                // but NOT text-[var(--muted-foreground)] on the value itself:
+                // that made all three pre-filled descriptors ("seafood, loud
+                // & casual", etc.) indistinguishable from empty placeholder
+                // text. Placeholder styling already comes from the base
+                // Input's own placeholder: class.
+                className="text-[13px] leading-[18px] font-normal"
               />
             </div>
           ))}

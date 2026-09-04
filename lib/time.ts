@@ -1,12 +1,20 @@
 // lib/time.ts — fixed clock so the prototype looks identical whenever it's opened.
 
-export const NOW = '2026-08-29T21:35:00';
+// 19:35, not 21:35: lib/pollScript.ts's deriveSlot hardcodes "dinner" at
+// 20:00 regardless of NOW. At 21:35 that scheduled dinner 95 minutes in the
+// past the instant the poll closed (and timestamped the follow-up "Booked
+// for 8" chat message after 21:40 — after the dinner it announces), and it
+// meant Home's "Next up" could never show tonight's dinner once the poll
+// created it. 19:35 keeps every seeded same-day item (10:30, 12:30, 16:10)
+// safely in the past while leaving the 20:00 dinner slot — and "Booked for
+// 8" — genuinely ahead of the fixed clock.
+export const NOW = '2026-08-29T19:35:00';
 
 // Parsed as UTC explicitly (note the appended 'Z'). Without it, `new Date(...)`
 // treats a timezone-less ISO string as the *viewer's local time*, so
 // `.toISOString()` below would silently shift every generated timestamp by
 // the browser's UTC offset — e.g. a viewer in IST (UTC+5:30) would see
-// "21:35" become "16:05" once round-tripped. Forcing UTC keeps the fixed
+// "19:35" become "14:05" once round-tripped. Forcing UTC keeps the fixed
 // clock's wall-clock time identical for every viewer, regardless of timezone.
 const NOW_MS = new Date(`${NOW}Z`).getTime();
 

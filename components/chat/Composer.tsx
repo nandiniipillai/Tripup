@@ -40,33 +40,14 @@ export function Composer() {
         className="flex-1 min-w-0 px-4"
       />
 
-      {/* Ghost, per §6.2 — the poll icon and the send button were identical
-          44px filled accent circles, so neither read as the primary act. The
-          solid accent circle is reserved for send.
-          Confirmed again against the hi-fi: the quick-status trigger
-          (QuickStatusPopover) is the one that gets the filled accent circle
-          now, not this button. Once a poll exists, its own card (accent
-          border, LIVE badge — see PollCard.tsx) already carries the visual
-          weight; this entry point doesn't need to out-shout it too. That's
-          the human designer's explicit call here, followed exactly. */}
-      <button
-        aria-label="Create a poll"
-        onClick={() => openSheet('createPoll')}
-        className="flex items-center justify-center shrink-0 pressable"
-        style={{ width: 44, height: 44, borderRadius: 9999, background: 'transparent' }}
-      >
-        <svg width="20" height="20" viewBox="0 0 20 20" fill="none">
-          {/* checklist / ballot glyph — reads unambiguously as "poll", not signal bars */}
-          <circle cx="4" cy="5.5" r="1.4" fill="var(--foreground)" />
-          <rect x="7.5" y="4.3" width="9" height="2.4" rx="1.2" fill="var(--foreground)" />
-          <circle cx="4" cy="10" r="1.4" fill="var(--foreground)" />
-          <rect x="7.5" y="8.8" width="9" height="2.4" rx="1.2" fill="var(--foreground)" />
-          <path d="M2.7 14.5L3.7 15.5L5.4 13.4" stroke="var(--foreground)" strokeWidth="1.3" strokeLinecap="round" strokeLinejoin="round" />
-          <rect x="7.5" y="13.3" width="9" height="2.4" rx="1.2" fill="var(--foreground)" />
-        </svg>
-      </button>
-
-      {canSend && (
+      {/* Reversed again per the updated hi-fi: poll and send now SHARE one
+          loud accent-circle slot — poll shows at rest, send replaces it the
+          moment there's text, so the two are never both visible and never
+          compete. Quick-status moves the other way, permanently ghost (see
+          QuickStatusPopover.tsx) — it's a nice-to-have, not the scenario's
+          central act, and shouldn't out-shout the thing that actually needs
+          the loud treatment. */}
+      {canSend ? (
         <button
           aria-label="Send message"
           onClick={submit}
@@ -75,6 +56,23 @@ export function Composer() {
         >
           <svg width="18" height="18" viewBox="0 0 18 18" fill="none">
             <path d="M3 15L15 3M15 3H6M15 3V12" stroke="var(--accent-foreground)" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round" />
+          </svg>
+        </button>
+      ) : (
+        <button
+          aria-label="Create a poll"
+          onClick={() => openSheet('createPoll')}
+          className="flex items-center justify-center shrink-0 press-accent animate-send-in"
+          style={{ width: 44, height: 44, borderRadius: 9999, background: 'var(--accent)' }}
+        >
+          <svg width="20" height="20" viewBox="0 0 20 20" fill="none">
+            {/* checklist / ballot glyph — reads unambiguously as "poll", not signal bars */}
+            <circle cx="4" cy="5.5" r="1.4" fill="var(--accent-foreground)" />
+            <rect x="7.5" y="4.3" width="9" height="2.4" rx="1.2" fill="var(--accent-foreground)" />
+            <circle cx="4" cy="10" r="1.4" fill="var(--accent-foreground)" />
+            <rect x="7.5" y="8.8" width="9" height="2.4" rx="1.2" fill="var(--accent-foreground)" />
+            <path d="M2.7 14.5L3.7 15.5L5.4 13.4" stroke="var(--accent-foreground)" strokeWidth="1.3" strokeLinecap="round" strokeLinejoin="round" />
+            <rect x="7.5" y="13.3" width="9" height="2.4" rx="1.2" fill="var(--accent-foreground)" />
           </svg>
         </button>
       )}

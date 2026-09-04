@@ -12,6 +12,7 @@ export function PollCard({ poll }: { poll: Poll }) {
   const castVote = useTripStore((s) => s.castVote);
   const addPollOption = useTripStore((s) => s.addPollOption);
   const setOpenDialog = useTripStore((s) => s.setOpenDialog);
+  const closePoll = useTripStore((s) => s.closePoll);
 
   const tally: Record<string, number> = {};
   for (const o of poll.options) tally[o.id] = 0;
@@ -42,8 +43,22 @@ export function PollCard({ poll }: { poll: Poll }) {
       <div className="flex items-center justify-between mb-2">
         {isOpen && (
           <div className="flex items-center gap-1.5">
-            <span className="inline-block rounded-full animate-live-pulse" style={{ width: 6, height: 6, background: 'var(--accent)' }} />
-            <span className="text-micro" style={{ color: 'var(--accent)' }}>LIVE</span>
+            {/* Ties happen naturally early in the vote sequence (1-1-0-1) — the
+                per-option "leading" highlight is correctly suppressed then
+                (isLeading requires !isTie), but that used to leave the card
+                flat with no explanation. TIED replaces LIVE outright (per the
+                hi-fi) rather than appending to it — one label, one state. */}
+            {isTie ? (
+              <>
+                <span className="inline-block rounded-full" style={{ width: 6, height: 6, background: 'var(--negative)' }} />
+                <span className="text-micro" style={{ color: 'var(--negative)' }}>TIED</span>
+              </>
+            ) : (
+              <>
+                <span className="inline-block rounded-full animate-live-pulse" style={{ width: 6, height: 6, background: 'var(--accent)' }} />
+                <span className="text-micro" style={{ color: 'var(--accent)' }}>LIVE</span>
+              </>
+            )}
           </div>
         )}
         {isTieBreak && <span className="text-micro" style={{ color: 'var(--negative)' }}>TIE — NEEDS A DECISION</span>}
@@ -104,11 +119,29 @@ export function PollCard({ poll }: { poll: Poll }) {
           <div className="mt-2">
             <AddOptionInline onAdd={(name) => addPollOption(poll.id, { name }, CURRENT_USER_ID)} />
           </div>
+          {/* Tied gets its own direct footer action (per the hi-fi) — "Break
+              tie" calls the same closePoll the normal footer's "Close poll"
+              does, since that action already detects the tie and opens
+              TieBreakDialog; a live tie just skips straight there instead of
+              making the tie-breaker discover it by tapping Close first. */}
           <div className="flex items-center justify-between gap-2 mt-2 pt-2" style={{ borderTop: '1px solid var(--border)' }}>
-            <span className="text-caption min-w-0 truncate" style={{ color: 'var(--muted-foreground)' }}>Closes when everyone&apos;s voted</span>
-            <QuietButton onClick={() => setOpenDialog({ type: 'closePoll', pollId: poll.id })}>
-              Close poll
-            </QuietButton>
+            {isTie ? (
+              <>
+                <span className="text-caption min-w-0 truncate" style={{ color: 'var(--negative)' }}>
+                  {leaders.length}-way tie — anyone can break it
+                </span>
+                <QuietButton onClick={() => closePoll(poll.id, { auto: false, byId: CURRENT_USER_ID })}>
+                  Break tie
+                </QuietButton>
+              </>
+            ) : (
+              <>
+                <span className="text-caption min-w-0 truncate" style={{ color: 'var(--muted-foreground)' }}>Closes when everyone&apos;s voted</span>
+                <QuietButton onClick={() => setOpenDialog({ type: 'closePoll', pollId: poll.id })}>
+                  Close poll
+                </QuietButton>
+              </>
+            )}
           </div>
         </>
       )}

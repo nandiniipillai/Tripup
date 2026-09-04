@@ -1,12 +1,13 @@
 'use client';
 
-import { useEffect } from 'react';
+import { useEffect, useState } from 'react';
 import { useRouter, useParams } from 'next/navigation';
 import { useTripStore } from '@/lib/store';
-import { useBalances, useTransfers } from '@/lib/selectors';
+import { useDisplayBalances, useTransfers } from '@/lib/selectors';
 import { CURRENT_USER_ID } from '@/lib/seed';
 import { BalanceRow } from '@/components/expenses/BalanceRow';
 import { ExpenseListRow } from '@/components/expenses/ExpenseListRow';
+import { ExpenseDetailSheet } from '@/components/expenses/ExpenseDetailSheet';
 import { PrimaryButton, QuietButton } from '@/components/common/Action';
 import { EmptyState } from '@/components/common/EmptyState';
 import { Separator } from '@/components/ui/separator';
@@ -18,8 +19,11 @@ export default function ExpensesPage() {
   const trip = useTripStore((s) => s.trip);
   const members = useTripStore((s) => s.members);
   const expenses = useTripStore((s) => s.expenses);
-  const balances = useBalances();
+  const balances = useDisplayBalances();
   const transfers = useTransfers();
+  const [selectedExpenseId, setSelectedExpenseId] = useState<string | null>(null);
+  const selectedExpense = expenses.find((e) => e.id === selectedExpenseId) ?? null;
+  const tripMemberList = trip.memberIds.map((id) => members[id]).filter(Boolean);
 
   useEffect(() => {
     setActiveTab('expenses');
@@ -52,7 +56,7 @@ export default function ExpensesPage() {
       {/* The "N payments instead of M" line now lives on Settle Up only
           (matches the hi-fi) — showing it here too repeated the app's best
           line one tap before the screen that actually delivers on it. */}
-      <div className="flex-1 overflow-y-auto px-4 pb-6 flex flex-col gap-4">
+      <div className="flex-1 overflow-y-auto no-scrollbar px-4 pb-6 flex flex-col gap-4">
         <div>
           <div className="text-micro mb-2" style={{ color: 'var(--muted-foreground)' }}>BALANCES</div>
           {/* overflow:hidden so the current-user row's tinted ground clips to
@@ -72,9 +76,20 @@ export default function ExpensesPage() {
           </div>
         </div>
 
-        {outstandingCount > 0 && (
+        {outstandingCount > 0 ? (
           <PrimaryButton onClick={() => router.push(`/trip/${params.tripId}/settle`)}>Settle up</PrimaryButton>
-        )}
+        ) : transfers.length > 0 ? (
+          // Same positive/settled language as ConsolidationBanner's allSquare
+          // variant — a check on --positive-tint, not just an empty gap where
+          // "Settle up" used to be.
+          <div
+            className="w-full shrink-0 flex items-center justify-center gap-2"
+            style={{ height: 48, borderRadius: 'var(--radius-md)', background: 'var(--positive-tint)', color: 'var(--positive)' }}
+          >
+            <span aria-hidden="true">✓</span>
+            <span className="text-callout">All settled</span>
+          </div>
+        ) : null}
 
         <Separator />
 
@@ -87,7 +102,7 @@ export default function ExpensesPage() {
               {expenses.map((exp, i) => (
                 <div key={exp.id}>
                   {i > 0 && <div style={{ borderTop: '1px solid var(--border)' }} />}
-                  <ExpenseListRow expense={exp} payer={members[exp.payerId]} />
+                  <ExpenseListRow expense={exp} payer={members[exp.payerId]} onClick={() => setSelectedExpenseId(exp.id)} />
                 </div>
               ))}
             </div>
@@ -95,6 +110,13 @@ export default function ExpensesPage() {
         </div>
       </div>
 
+      <ExpenseDetailSheet
+        expense={selectedExpense}
+        payer={selectedExpense ? members[selectedExpense.payerId] : undefined}
+        tripMembers={tripMemberList}
+        tripName={trip.name}
+        onClose={() => setSelectedExpenseId(null)}
+      />
     </div>
   );
 }

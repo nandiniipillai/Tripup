@@ -1,7 +1,6 @@
 import type { Metadata, Viewport } from "next";
 import "./globals.css";
 import { DeviceFrame } from "@/components/frame/DeviceFrame";
-import { Toaster } from "@/components/ui/sonner";
 
 // No webfont. §5.1 pins the system stack (--font-app) as one of the two
 // deliberate swap points for the designer's restyle; the Plus Jakarta face
@@ -27,7 +26,6 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
       </head>
       <body className="min-h-full">
         <DeviceFrame>{children}</DeviceFrame>
-        <Toaster position="bottom-center" duration={2600} />
       </body>
     </html>
   );

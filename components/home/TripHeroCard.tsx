@@ -1,7 +1,7 @@
 'use client';
 
 import { useTripStore } from '@/lib/store';
-import { useBalances, useItineraryByDay } from '@/lib/selectors';
+import { useDisplayBalances, useItineraryByDay } from '@/lib/selectors';
 import { CURRENT_USER_ID } from '@/lib/seed';
 import { Avatar } from '@/components/common/Avatar';
 import { Money } from '@/components/common/Money';
@@ -20,7 +20,7 @@ import type { ItineraryItem } from '@/lib/types';
 export function TripHeroCard({ onClick }: { onClick: () => void }) {
   const trip = useTripStore((s) => s.trip);
   const members = useTripStore((s) => s.members);
-  const balances = useBalances();
+  const balances = useDisplayBalances();
   const itineraryByDay = useItineraryByDay();
 
   const memberList = trip.memberIds.map((id) => members[id]).filter(Boolean);
@@ -42,7 +42,7 @@ export function TripHeroCard({ onClick }: { onClick: () => void }) {
   return (
     <button
       onClick={onClick}
-      className="text-left w-full overflow-hidden press-surface"
+      className="text-left w-full shrink-0 overflow-hidden press-surface"
       style={{
         borderRadius: 'var(--radius-lg)',
         background: 'var(--surface-raised)',
@@ -85,6 +85,21 @@ export function TripHeroCard({ onClick }: { onClick: () => void }) {
                 <Avatar member={m} size={26} />
               </span>
             ))}
+            {/* Overflow chip: once the group outgrows the 5-avatar cluster
+                (e.g. after Ren joins), the count next to it must not
+                silently disagree with what's actually rendered. */}
+            {memberList.length > 5 && (
+              <span
+                className="rounded-full flex items-center justify-center text-micro font-semibold"
+                style={{
+                  width: 26, height: 26, marginLeft: -8,
+                  boxShadow: '0 0 0 2px var(--surface-raised)',
+                  background: 'var(--surface)', color: 'var(--muted-foreground)',
+                }}
+              >
+                +{memberList.length - 5}
+              </span>
+            )}
           </div>
           <span className="text-caption" style={{ color: 'var(--muted-foreground)' }}>
             {memberList.length} people

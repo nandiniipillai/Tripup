@@ -34,6 +34,7 @@ export function formatCents(cents: Cents, currency: CurrencyCode = 'EUR'): strin
 export function formatConverted(cents: Cents, tripCurrency: CurrencyCode, homeCurrency: CurrencyCode): string | null {
   if (HOME_CURRENCY_UNAVAILABLE) return null; // EXP-EDGE-03
   if (homeCurrency === tripCurrency) return null;
+  if (cents === 0) return null; // "≈ $0.00" is noise, not information.
   const tripToEur = cents / FX[tripCurrency];
   const converted = Math.round(tripToEur * FX[homeCurrency]);
   return `≈ ${formatCents(converted, homeCurrency)}`;

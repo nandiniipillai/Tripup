@@ -38,7 +38,14 @@ export function ScreenHeader({ title, subtitle, left, right, onBack, backLabel }
           )
         ))}
       </div>
-      <div className="flex-[2] min-w-0 text-center">
+      {/* flex-[3] (was flex-[2]): with equal 1:1 side rails, "Record payment
+          from Sam" measured 206px of text against a 187px title box (1:2:1
+          split of the 374px content width) and truncated. 1:3:1 gives the
+          title ~224px — comfortably past every title this header carries
+          (checked: Settle up, New expense, New poll, Add to itinerary, and
+          every SettleSheet copy.title variant) — while still leaving room for
+          the longest side content ("Cancel"). */}
+      <div className="flex-[3] min-w-0 text-center">
         <div className="text-headline truncate">{title}</div>
         {subtitle && (
           <div className="text-caption truncate" style={{ color: 'var(--muted-foreground)' }}>

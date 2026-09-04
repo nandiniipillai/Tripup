@@ -14,20 +14,17 @@ export function QuickStatusPopover() {
 
   return (
     <Popover open={open} onOpenChange={setOpen}>
-      {/* Filled accent circle + bolt glyph, per the hi-fi (§6.2 follow-up):
-          this trigger is now the loud one in the composer. The poll button
-          (Composer.tsx) goes the other way, de-accented to a plain ghost —
-          once a poll exists its own card (accent border, LIVE badge) already
-          carries the visual weight, so the entry point doesn't need to
-          out-shout it too. Both stay 44px to match the composer's other
-          controls (send button, poll button) and the app's 44px tap minimum. */}
+      {/* Reversed again per the updated hi-fi: the poll/send slot on the
+          right now owns the loud accent circle (Composer.tsx). Quick status
+          is a nice-to-have, not the scenario's central act — permanently
+          ghost, never competing with it. Still 44px for the tap minimum. */}
       <PopoverTrigger
         aria-label="Quick status"
-        className="flex items-center justify-center shrink-0 press-accent"
-        style={{ width: 44, height: 44, borderRadius: 9999, background: 'var(--accent)' }}
+        className="flex items-center justify-center shrink-0 pressable"
+        style={{ width: 44, height: 44, borderRadius: 9999, background: 'transparent' }}
       >
         <svg width="18" height="18" viewBox="0 0 24 24" fill="none">
-          <path d="M13 2 L4 14 H11 L9 22 L20 8 H13 Z" fill="var(--accent-foreground)" />
+          <path d="M13 2 L4 14 H11 L9 22 L20 8 H13 Z" fill="var(--foreground)" />
         </svg>
       </PopoverTrigger>
       <PopoverContent
